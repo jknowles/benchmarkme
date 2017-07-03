@@ -89,22 +89,6 @@ You can alter this to via the `tmpdir` argument. This is useful for comparing ha
 res_io = benchmark_io(tmpdir = "some_other_directory")
 ```
 
-Parallel Performance
---------------------
-
-Modern computers increasingly provide the user with more processing cores to 
-do work in parallel. The package has useful functions for measuring the increase 
-in speed that can be obtained by parallelizing code, as well as measuring the 
-efficiency the machine scales code to more and more cores. 
-
-``` r
-res_p = benchmark_std(runs = 3, cores = 2)
-```
-
-```r
-ggplot(res_p, aes(x = test, y = elapsed, color = factor(cores))) + 
-geom_point()
-```
 
 Machine specs
 -------------

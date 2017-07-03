@@ -104,6 +104,41 @@ hard drive access to a network drive.
 res_io = benchmark_io(tmpdir = "some_other_directory")
 ```
 
+
+## Parallel Performance
+
+
+Modern computers increasingly provide the user with more processing cores to 
+do work in parallel. The package has useful functions for measuring the increase 
+in speed that can be obtained by parallelizing code, as well as measuring the 
+efficiency the machine scales code to more and more cores. 
+
+
+```{r}
+res = benchmark_std(runs = 3)
+res_p = benchmark_std(runs = 3, parallel = c(1, 2, 4))
+```
+
+```{r}
+ggplot(res_p, aes(x = test, y = elapsed, color = factor(cores))) + 
+geom_point()
+
+
+bench_sum <- res_p %>% group_by(test, cores) %>% 
+  summarize(elapsed = mean(elapsed), 
+            test_group = first(test_group)) %>% 
+  ungroup %>% 
+  group_by(test) %>% 
+  mutate(solo = elapsed[cores == 1]) %>% 
+  mutate(speedup = round(solo / elapsed, 3))
+
+ggplot(bench_sum, aes(x = cores, y = speedup, group = test, color = test)) + 
+  geom_line() + theme_bw() + geom_point() + facet_wrap(~test_group) + 
+  geom_abline(slope = 1, intercept = 0) + 
+  scale_y_continuous(limits = c(1, 4))
+
+```
+
 ## Machine specs
 
 The package has a few useful functions for extracting system specs:

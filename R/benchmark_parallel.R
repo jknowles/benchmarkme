@@ -38,6 +38,7 @@ bm_parallel = function(bm, runs, verbose, cores, ...){
   #TODO consider dropping first results from parallel results due to overhead
   results <- data.frame(user = NA, system = NA, elapsed = NA, test = NA, 
                         test_group = NA, cores = NA)
+  max_cores <- max(cores)
   for(core in cores){
     cl = parallel::makeCluster(core, outfile = "")
    
@@ -46,7 +47,7 @@ bm_parallel = function(bm, runs, verbose, cores, ...){
                      test=NA, test_group=NA, cores = NA, stringsAsFactors = FALSE)
     for(j in 1:runs){
       tmp[j, 1:3] <- system.time({
-        out <- foreach(k = 1:core, .export = bm) %dopar% 
+        out <- foreach(k = 1:max_cores, .export = bm) %dopar% 
           do.call(bm, args, quote = TRUE) #, envir = environment(bm_parallel))
       })[1:3]
     }
